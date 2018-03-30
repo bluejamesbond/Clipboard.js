@@ -21,6 +21,19 @@ app.use(morgan('short'));
 app.use(compression());
 
 const clipboard = new Map();
+const expiration = new Map();
+
+const setExpiration = (id, time = 15 * 60 * 1000) => {
+  clearTimeout(expiration.get(id));
+
+  expiration.set(
+    id,
+    setTimeout(() => {
+      clipboard.delete(id);
+      expiration.delete(id);
+    }, time)
+  );
+};
 
 app.post(
   '/copy',
@@ -94,6 +107,8 @@ app.post(
 
     clipboard.set(id, await toArray(streamify(dataArray).pipe(gzip)));
 
+    setExpiration(id);
+
     res.json({ id });
   })
 );
@@ -110,6 +125,8 @@ app.get(
       res.send().status(404);
       return;
     }
+
+    setExpiration(id);
 
     streamify(clipboard.get(id))
       .pipe(zlib.createGunzip({ level: zlib.constants.Z_BEST_COMPRESSION }))
