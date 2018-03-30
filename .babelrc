@@ -1,0 +1,22 @@
+{
+    "plugins": [
+      "transform-class-properties"
+    ],
+    "presets": [
+      "es2015",
+      "latest",
+      "react",
+      "stage-0"
+    ],
+    "ignore": [
+      "web_modules/"
+    ],
+    "env": {
+      "production": {
+        "plugins": [
+          "transform-react-inline-elements",
+          "transform-react-constant-elements"
+        ]
+      }
+    }
+  }
