@@ -117,6 +117,23 @@ app.get(
   })
 );
 
-app.post('/delete', wrap(async (req, res) => {}));
+app.post(
+  '/delete',
+  wrap(async (req, res) => {
+    const { id } = {
+      ...(req.query || {}),
+      ...(req.body || {})
+    };
+
+    if (!clipboard.has(id)) {
+      res.send().status(404);
+      return;
+    }
+
+    clipboard.delete(id);
+
+    res.send();
+  })
+);
 
 server.listen(port, () => console.log(`Server listening on port ${port}!`));
